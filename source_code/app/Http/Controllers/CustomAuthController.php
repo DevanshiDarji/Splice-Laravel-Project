@@ -20,17 +20,6 @@ class CustomAuthController extends BaseController{
     }  
       
     public function customLogin(Request $request){
-       /* $request->validate([
-            'email' => 'required',
-            'password' => 'required',
-        ]);
-   
-        $credentials = $request->only('email', 'password');
-        if (Auth::attempt($credentials)) {
-            return redirect()->intended('dashboard')->withSuccess('Signed in');
-        }
-    
-        return redirect("login")->withSuccess('Login details are not valid');*/
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
             $user = Auth::user(); 
             $success['token'] =  $user->createToken('MyApp')->accessToken; 
@@ -88,6 +77,7 @@ class CustomAuthController extends BaseController{
     
     public function dashboard(){
         if(Auth::check()){
+            $products = Product::paginate(2);
             return view('dashboard', ['products' => $products]);
         }
         return redirect("login")->withSuccess('You are not allowed to access');

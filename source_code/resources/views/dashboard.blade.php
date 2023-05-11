@@ -63,6 +63,7 @@
                 @endif
             </tbody>
         </table>
+        {!! $products->links() !!}
     </div>
 </body>
 </html>
