@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomAuthController;
 use App\Http\Controllers\CustomForgotPasswordController;
-
+use App\Http\Controllers\CustomizedProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +27,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 
 //Update Custom Routes for authentication 
 Route::get('dashboard', [CustomAuthController::class, 'dashboard'])->name('dashboard'); 

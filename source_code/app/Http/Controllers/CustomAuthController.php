@@ -1,18 +1,26 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
-use Hash;
 use Session;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-class CustomAuthController extends Controller{
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Http\Controllers\BaseController;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Product;
+
+
+class CustomAuthController extends BaseController{
     public function index(){
         return view('auth.login');
     }  
       
     public function customLogin(Request $request){
-        $request->validate([
+       /* $request->validate([
             'email' => 'required',
             'password' => 'required',
         ]);
@@ -21,8 +29,18 @@ class CustomAuthController extends Controller{
         if (Auth::attempt($credentials)) {
             return redirect()->intended('dashboard')->withSuccess('Signed in');
         }
-  
-        return redirect("login")->withSuccess('Login details are not valid');
+    
+        return redirect("login")->withSuccess('Login details are not valid');*/
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+            $user = Auth::user(); 
+            $success['token'] =  $user->createToken('MyApp')->accessToken; 
+            $success['name'] =  $user->name;
+           
+            //return $this->sendResponse($success, 'User login successfully.');
+            return redirect()->intended('dashboard')->withSuccess('Signed in');
+        }else{ 
+            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+        } 
     }
 
     public function registration(){
@@ -30,7 +48,7 @@ class CustomAuthController extends Controller{
     }
       
     public function customRegistration(Request $request){  
-        $request->validate([
+       /* $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
@@ -39,6 +57,24 @@ class CustomAuthController extends Controller{
         $data = $request->all();
         $check = $this->create($data);
          
+        return redirect("dashboard")->withSuccess('You have signed-in');*/
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+   
+        $input = $request->all();
+        $input['password'] = bcrypt($input['password']);
+        $user = User::create($input);
+        $success['token'] =  $user->createToken('MyApp')->accessToken;
+        $success['name'] =  $user->name;
+   
+       // return $this->sendResponse($success, 'User register successfully.');
         return redirect("dashboard")->withSuccess('You have signed-in');
     }
 
@@ -52,7 +88,7 @@ class CustomAuthController extends Controller{
     
     public function dashboard(){
         if(Auth::check()){
-            return view('dashboard');
+            return view('dashboard', ['products' => $products]);
         }
         return redirect("login")->withSuccess('You are not allowed to access');
     }
