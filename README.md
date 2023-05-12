@@ -1,4 +1,5 @@
 Splice Laravel API Project
+Laravel Version - 9.52.7
 
 Steps for Intsalltion :-
 
