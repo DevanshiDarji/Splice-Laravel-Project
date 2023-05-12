@@ -18,15 +18,7 @@ class CustomizedProductController extends BaseController
      */
     public function index()
     {
-        /*$products = Product::all()->map(function ($product) {
-            $productArray = $product->toArray();
-            $productArray['image_url'] = asset('storage/' . $product->image);
-            return $productArray;
-        });
-
-        return response()->json($products);*/
         $products = Product::all();
-       // return response()->json($products);
         return $this->sendResponse(ProductResource::collection($products), 'Products Retrieved Successfully.');
     }
 
@@ -37,23 +29,10 @@ class CustomizedProductController extends BaseController
      * @return \Illuminate\Http\Response
      */
     public function create(){
+
         
     }
-    public function store(Request $request)
-    {
-        /*$user = Auth::user();
-
-        $product = new Product();
-        $product->name = $request->input('name');
-        $product->description = $request->input('description');
-        $product->price = $request->input('price');
-        $product->quantity = $request->input('quantity');
-        $product->image = $request->file('image')->store('public/images');
-        $product->user_id = $user->id;
-        $product->save();
-
-        return response()->json(['success' => true, 'message' => 'Product created successfully'], 201);*/
-
+    public function store(Request $request){
         $input = $request->all();
    
         $validator = Validator::make($input, [
@@ -100,14 +79,6 @@ class CustomizedProductController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        /*$product = Product::find($id);
-  
-        if (is_null($product)) {
-            return $this->sendError('Product not found.');
-        }
-   
-        return $this->sendResponse(new ProductResource($product), 'Product Retrieved Successfully.');*/
-
         $input = $request->all();
    
         $validator = Validator::make($input, [
